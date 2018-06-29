@@ -1,0 +1,12 @@
+db:
+  engine: postgresql
+  driver: psycopg2
+  host: postgres
+  port: 5432
+  database: teamster
+  user: teamster_user
+  password: teamster_password
+
+redis:
+  host: redis
+  port: 6379

@@ -1,0 +1,25 @@
+version: '2'
+
+services:
+
+  teamster:
+    build: .
+    environment:
+      - PYTHONPATH=/app/teamster
+    depends_on:
+      - postgres
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    command: sleep
+
+  postgres:
+    image: postgres:10
+    environment:
+      - POSTGRES_PASSWORD=teamster_password
+      - POSTGRES_USER=teamster_user
+      - POSTGRES_DB=teamster
+
+  redis:
+    image: redis:alpine

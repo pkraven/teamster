@@ -1,0 +1,10 @@
+env/
+.idea/
+__pycache__/
+*.py[cod]
+.cache/
+.vscode/
+auth/locals/*
+.history/
+.pytest_cache/
+builds/

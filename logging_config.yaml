@@ -1,0 +1,33 @@
+version: 1
+
+disable_existing_loggers: false
+
+formatters:
+  simple:
+    format: '%(asctime)-1s [%(name)s] %(levelname)s %(message)s'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    stream: ext://sys.stdout
+    level: DEBUG
+    formatter: simple
+  graylog:
+    class: pygelf.GelfUdpHandler
+    host: graylog  # override on prod
+    port: 12201
+    debug: false
+    level: INFO
+    include_extra_fields: true
+
+
+loggers:
+  aiohttp:
+    level: WARN
+    propagate: false
+
+root:
+  level: DEBUG  # set to INFO on prod
+  handlers:
+    - console
+#    - graylog  # uncomment on prod
