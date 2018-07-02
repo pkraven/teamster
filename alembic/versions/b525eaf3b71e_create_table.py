@@ -30,9 +30,9 @@ def upgrade():
         'schedule',
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('user_id', sa.Integer, sa.ForeignKey('users.id', onupdate='RESTRICT', ondelete='SET NULL')),
-        sa.Column('time_start', sa.DateTime),
-        sa.Column('time_end', sa.DateTime),
-        sa.Column('type', sa.Enum('start', 'end', 'eat', 'rest', name='schedule_type_enum'))
+        sa.Column('time_start', sa.Time),
+        sa.Column('time_end', sa.Time),
+        sa.Column('str_type', sa.Enum('start', 'end', 'eat', 'rest', name='schedule_type_enum'))
     )
 
 def downgrade():

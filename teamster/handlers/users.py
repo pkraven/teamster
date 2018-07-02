@@ -3,8 +3,8 @@ from aiohttp.web import Response, Request
 from dao.users import UsersDAO
 from dao.schedule import ScheduleDAO
 from utils.decorators import LoadJson
-from schemes import CreateUserSchema, ResponseUserSchema
-from errors import UserNotFoundError
+from schemas import CreateUserSchema, ResponseUserSchema
+from errors import NotFoundUserError
 
 
 class UsersHandler:
@@ -13,22 +13,21 @@ class UsersHandler:
         self._users_dao = users_dao
         self._schedule_dao = schedule_dao
 
-    @LoadJson(CreateUserSchema())
-    async create_user(self, request: Request, data: dict) -> Response:
+    @LoadJson(CreateUserSchema(strict=True))
+    async def create_user(self, request: Request, data: dict) -> Response:
         """
         create new user
         :param request: http request context
         :param data: user parameters
         :return: aiohttp response
         """
-        await self._users_dao.create_user(data)
+        await self._users_dao.create_user(**data)
 
         return Response(status=201)
 
-
-    async get_user(self, request: Request) -> Response:
+    async def get_user(self, request: Request) -> Response:
         """
-        get user with  by id
+        get user with by id
         :param request: http request context
         :param data: user parameters
         :return: aiohttp response
@@ -36,7 +35,7 @@ class UsersHandler:
         user_id = request.match_info.get('user_id')
         user = await self._users_dao.get_user(user_id)
         if not user:
-            raise UserNotFoundError()
+            raise NotFoundUserError()
 
         schedule = await self._schedule_dao.get_schedule(user_id)
 
@@ -47,8 +46,7 @@ class UsersHandler:
             text=response_data
         )
 
-
-    async get_users_list(self, request: Request) -> Response:
+    async def get_users_list(self, request: Request) -> Response:
         """
         get all users
         :param request: http request context

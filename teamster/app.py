@@ -1,13 +1,14 @@
 import asyncio
 import logging
 import uvloop
+from aiohttp import web
 from aiohttp.web_middlewares import normalize_path_middleware
 
 from utils.config import get_config
-from services.db import PostgresConnection
+from services.db import DatabaseConnection
 from services.redis import RedisConnection
-from dao.users import UsersDao
-from dao.schedule import ScheduleDao
+from dao.users import UsersDAO
+from dao.schedule import ScheduleDAO
 from handlers.users import UsersHandler
 from handlers.schedule import ScheduleHandler
 from handlers.chat import ChatHandler
@@ -24,23 +25,23 @@ async def initialize(app):
 
     config = get_config()
 
-    app['db'] = PostgresConnection(**config['db'])
+    app['db'] = DatabaseConnection(**config['db'])
     await app['db'].connect(loop)
 
     app['redis'] = RedisConnection(**config['redis'])
     await app['redis'].connect(loop)
 
-    user_dao = UsersDao(db=app['db'])
-    schedule_dao = ScheduleDao(db=app['db'])
+    users_dao = UsersDAO(db=app['db'])
+    schedule_dao = ScheduleDAO(db=app['db'])
 
-    user_handler = UserHandler(user_dao=user_dao, schedule_dao=schedule_dao)
+    user_handler = UsersHandler(users_dao=users_dao, schedule_dao=schedule_dao)
     schedule_handler = ScheduleHandler(schedule_dao=schedule_dao)
-    chat_handler = ChatHandler(redis=app['redis'], user_dao=user_dao)
+    chat_handler = ChatHandler(redis=app['redis'], users_dao=users_dao)
 
     app.add_routes([web.post('/user/', user_handler.create_user)])
     app.add_routes([web.get('/user/{user_id}', user_handler.get_user)])
     app.add_routes([web.get('/users/', user_handler.get_users_list)])
-    app.add_routes([web.post('user/{user_id}/schedule/', schedule_handler.add_schedule)])
+    app.add_routes([web.post('/user/{user_id}/schedule/', schedule_handler.add_schedule)])
 
     app.add_routes([web.get('/ws/', chat_handler.websocket_server)])
 

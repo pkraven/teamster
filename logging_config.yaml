@@ -12,14 +12,6 @@ handlers:
     stream: ext://sys.stdout
     level: DEBUG
     formatter: simple
-  graylog:
-    class: pygelf.GelfUdpHandler
-    host: graylog  # override on prod
-    port: 12201
-    debug: false
-    level: INFO
-    include_extra_fields: true
-
 
 loggers:
   aiohttp:
@@ -27,7 +19,6 @@ loggers:
     propagate: false
 
 root:
-  level: DEBUG  # set to INFO on prod
+  level: DEBUG
   handlers:
     - console
-#    - graylog  # uncomment on prod

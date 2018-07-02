@@ -7,7 +7,7 @@ class RedisConnection:
     """
 
     def __init__(self, **settings):
-        self._dsn = format('redis://{host}:{port}', **settings)
+        self._dsn = 'redis://{host}:{port}'.format(**settings)
 
     async def connect(self, loop) -> None:
         """

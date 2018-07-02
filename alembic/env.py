@@ -12,7 +12,7 @@ config = context.config
 fileConfig(config.config_file_name)
 
 app_config = get_config()
-db_url = "{engine}://{user}:{password}@{host}:{port}/{database}".format(**app_config['db'])
+db_url = "postgres://{user}:{password}@{host}:{port}/{database}".format(**app_config['db'])
 config.set_main_option("sqlalchemy.url", db_url)
 
 
