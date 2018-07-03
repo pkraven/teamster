@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, pre_dump
 
 
 class CreateUserSchema(Schema):
@@ -16,12 +16,20 @@ class ResponseScheduleSchema(Schema):
     time_end = fields.Time()
 
 
+class ScheduleList(fields.Nested):
+    def _serialize(self, value, attr, obj):
+        if attr == 'schedule' and not value:
+            value = []
+        return super()._serialize(value, attr, obj)
+
+
 class ResponseUserSchema(Schema):
-    name = fields.String(required=True)
+    id = fields.String()
+    name = fields.String()
     birthday = fields.Date()
     phone = fields.String()
     email = fields.String()
-    schedule = fields.Nested(ResponseScheduleSchema, many=True)
+    schedule = ScheduleList(ResponseScheduleSchema, many=True)
 
 
 class AddScheduleSchema(Schema):

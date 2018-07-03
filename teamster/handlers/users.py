@@ -21,9 +21,14 @@ class UsersHandler:
         :param data: user parameters
         :return: aiohttp response
         """
-        await self._users_dao.create_user(**data)
+        user = await self._users_dao.create_user(**data)
 
-        return Response(status=201)
+        response_data = ResponseUserSchema().dumps(user).data
+        return Response(
+            status=200,
+            content_type='application/json',
+            text=response_data
+        )
 
     async def get_user(self, request: Request) -> Response:
         """
@@ -32,7 +37,7 @@ class UsersHandler:
         :param data: user parameters
         :return: aiohttp response
         """
-        user_id = request.match_info.get('user_id')
+        user_id = int(request.match_info.get('user_id'))
         user = await self._users_dao.get_user(user_id)
         if not user:
             raise NotFoundUserError()
@@ -52,9 +57,9 @@ class UsersHandler:
         :param request: http request context
         :return: aiohttp response
         """
-        users = await self._users_dao.get_user_list(user_id)
+        users = await self._users_dao.get_users_list()
 
-        response_data = ResponseUserSchema().dumps(users, many=True).data
+        response_data = ResponseUserSchema(strict=True).dumps(users, many=True).data
         return Response(
             status=200,
             content_type='application/json',

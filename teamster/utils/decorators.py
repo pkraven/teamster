@@ -28,6 +28,6 @@ class LoadJson:
             except ValidationError as e:
                 raise UnprocessableEntityError(e)
 
-            return func(handler, request, *args, **kwargs, data=data)
+            return await func(handler, request, *args, **kwargs, data=data)
 
         return wrapper

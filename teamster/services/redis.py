@@ -23,7 +23,8 @@ class RedisConnection:
         :return:
         """
         if self._pool:
-            await self._pool.close()
+            self._pool.close()
+            await self._pool.wait_closed()
 
     @property
     def pool(self):

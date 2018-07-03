@@ -19,7 +19,7 @@ class ScheduleHandler:
         :param data: schedule string parameters
         :return: aiohttp response
         """
-        user_id = request.match_info.get('user_id')
+        user_id = int(request.match_info.get('user_id'))
 
         try:
             await self._schedule_dao.add_schedule(user_id=user_id, **data)

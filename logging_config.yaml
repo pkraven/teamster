@@ -13,10 +13,9 @@ handlers:
     level: DEBUG
     formatter: simple
 
-loggers:
-  aiohttp:
-    level: WARN
-    propagate: false
+# loggers:
+#   aiohttp.web:
+#     level: DEBUG
 
 root:
   level: DEBUG

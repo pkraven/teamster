@@ -27,9 +27,11 @@ async def initialize(app):
 
     app['db'] = DatabaseConnection(**config['db'])
     await app['db'].connect(loop)
+    logger.info('Database pool created')
 
     app['redis'] = RedisConnection(**config['redis'])
     await app['redis'].connect(loop)
+    logger.info('Redis pool created')
 
     users_dao = UsersDAO(db=app['db'])
     schedule_dao = ScheduleDAO(db=app['db'])
@@ -44,6 +46,7 @@ async def initialize(app):
     app.add_routes([web.post('/user/{user_id}/schedule/', schedule_handler.add_schedule)])
 
     app.add_routes([web.get('/ws/', chat_handler.websocket_server)])
+    logger.info('Routes added')
 
 
 async def close_db(app):

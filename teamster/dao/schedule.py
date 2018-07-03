@@ -1,3 +1,5 @@
+from typing import List
+from asyncpg import Record
 from asyncpg.exceptions import ForeignKeyViolationError
 
 from services.db import DatabaseConnection
@@ -9,7 +11,7 @@ class ScheduleDAO:
     def __init__(self, db: DatabaseConnection) -> None:
         self._db = db
 
-    async def add_schedule(self, user_id: str, str_type: str, time_start: str, time_end: str) -> None:
+    async def add_schedule(self, user_id: int, str_type: str, time_start: str, time_end: str) -> None:
         """
         add string to schedule or update string if str_type 'start' or 'end'
         :param user_id: user's id
@@ -40,3 +42,17 @@ class ScheduleDAO:
                     """, user_id, str_type, time_start, time_end)
             except ForeignKeyViolationError:
                 raise DaoNotFoundUserError
+
+    async def get_schedule(self, user_id: int) -> List[Record]:
+        """
+        get schedule for user by user_id
+        :param user_id: user id
+        :return: schedule records
+        """
+        async with self._db.pool.acquire() as conn:
+            users = await conn.fetch("""
+                SELECT * FROM schedule
+                WHERE user_id = $1
+                ORDER BY id
+            """, user_id)
+        return users
