@@ -9,7 +9,7 @@ from errors import NotFoundUserError
 
 class UsersHandler:
 
-    def __init__(self, users_dao: UsersDAO, schedule_dao: ScheduleDAO):
+    def __init__(self, users_dao: UsersDAO, schedule_dao: ScheduleDAO) -> None:
         self._users_dao = users_dao
         self._schedule_dao = schedule_dao
 

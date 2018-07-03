@@ -153,4 +153,4 @@ def test_create_schedule_repeat_start_end_200(url_prefix):
 
     user = requests.get(f"{url_prefix}/user/{user_id}")
 
-    assert user.json()['schedule'][1]['time_start'] == "12:00:00"
+    assert user.json()['schedule'][0]['time_start'] == "12:00:00"

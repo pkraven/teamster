@@ -8,7 +8,7 @@ from errors import NotFoundUserError, DaoNotFoundUserError
 
 class ScheduleHandler:
 
-    def __init__(self, schedule_dao: ScheduleDAO):
+    def __init__(self, schedule_dao: ScheduleDAO) -> None:
         self._schedule_dao = schedule_dao
 
     @LoadJson(AddScheduleSchema(strict=True))

@@ -25,6 +25,8 @@ async def initialize(app):
 
     config = get_config()
 
+    app['channels'] = {}
+
     app['db'] = DatabaseConnection(**config['db'])
     await app['db'].connect(loop)
     logger.info('Database pool created')
@@ -45,7 +47,7 @@ async def initialize(app):
     app.add_routes([web.get('/users/', user_handler.get_users_list)])
     app.add_routes([web.post('/user/{user_id}/schedule/', schedule_handler.add_schedule)])
 
-    app.add_routes([web.get('/ws/', chat_handler.websocket_server)])
+    app.add_routes([web.get('/ws/{chat_id}/{user_id}/', chat_handler.websocket_server)])
     logger.info('Routes added')
 
 
@@ -59,6 +61,13 @@ async def close_redis(app):
     logger.info('Redis closed')
 
 
+async def close_websockets(app):
+    for users in app['channels'].values():
+        for ws in users:
+            await ws.close(code=1000, message='Server shutdown')
+    logger.info('Websockets closed')
+
+
 def start(argv):
     loop = uvloop.new_event_loop()
     asyncio.set_event_loop(loop)
@@ -68,6 +77,7 @@ def start(argv):
     ])
 
     app.on_startup.append(initialize)
+    app.on_shutdown.append(close_websockets)
     app.on_cleanup.append(close_db)
     app.on_cleanup.append(close_redis)
 

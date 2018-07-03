@@ -49,7 +49,7 @@ def test_create_user_wrong_params_422(url_prefix, body):
         headers={"Content-Type": "application/json"}
     )
 
-    assert user.status_code == 423
+    assert user.status_code == 422
 
 
 @pytest.mark.parametrize("phone,code", [
